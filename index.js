@@ -4,9 +4,9 @@ const AWS = require('aws-sdk');
 AWS.config.update({region: 'ap-northeast-1'});
 
 // Create S3 service object
-const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+const s3 = new AWS.S3({apiVersion: '2006-03-01',signatureVersion: 'v4'});
 
-const params = {Bucket: 'sample', Key: 'test.jpg', Expires: 60};
+const params = {Bucket: 'sample', Key: 'test.jpg', Expires: 300};
 
-var url = s3.getSignedUrl('getObject', params);
-console.log('The URL is', url); // expires in 60 seconds
+const url = s3.getSignedUrl('putObject', params);
+console.log('The URL is', url);
