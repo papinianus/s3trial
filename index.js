@@ -1,5 +1,7 @@
 // Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');
+const fs = require('fs');
+const request = require('request');
 // Set the region 
 AWS.config.update({region: 'ap-northeast-1'});
 
@@ -10,3 +12,12 @@ const params = {Bucket: 'sample', Key: 'test.jpg', Expires: 300};
 
 const url = s3.getSignedUrl('putObject', params);
 console.log('The URL is', url);
+
+fs.readFile('test.jpg', (err, data) => {
+    request.put({
+        method: "PUT",
+        uri: url
+    }, (error, response, body) => {
+        console.log(error);
+    });
+});
