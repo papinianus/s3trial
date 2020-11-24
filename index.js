@@ -5,22 +5,29 @@ const request = require('request');
 // Set the region 
 AWS.config.update({region: 'ap-northeast-1'});
 
-// Create S3 service object
-const s3 = new AWS.S3({apiVersion: '2006-03-01',signatureVersion: 'v4'});
-
-const params = {Bucket: 'sample', Key: 'test.jpg', Expires: 300, ContentDisposition: 'attachment',
-    ContentType: 'img/jpg',};
-
-const url = s3.getSignedUrl('putObject', params);
-console.log('The URL is', url);
-
+const getSignedUrl = (keypairId, privateKey, options) => {
+    const signer = new AWS.CloudFront.Signer(keypairId, privateKey);
+    return signer.getSignedUrl(options);
+}
+const target = "distribution and object key";
+const privateKey = fs.readFileSync('path_to_privakekey.pem');
+// URL生成
+const url = getSignedUrl(
+    "privatekey id",
+    privateKey,
+    {
+        url: target,
+        expires: 300,
+    }
+);
+console.log(url);
 fs.readFile('test.jpg', (err, data) => {
     request.put({
         method: "PUT",
         uri: url,
-        headers:{"Content-Disposition":'attachment',"Content-Type":'img/jpg'}
+        headers:{"Content-Disposition":'attachment',"Content-Type":'img/jpeg',"x-amz-acl": "bucket-owner-full-control"}
     }, (error, response, body) => {
         console.log(error);
-//        console.log(response);
+        console.log(response);
     });
 });
