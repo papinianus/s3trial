@@ -8,7 +8,8 @@ AWS.config.update({region: 'ap-northeast-1'});
 // Create S3 service object
 const s3 = new AWS.S3({apiVersion: '2006-03-01',signatureVersion: 'v4'});
 
-const params = {Bucket: 'sample', Key: 'test.jpg', Expires: 300};
+const params = {Bucket: 'sample', Key: 'test.jpg', Expires: 300, ContentDisposition: 'attachment',
+    ContentType: 'img/jpg',};
 
 const url = s3.getSignedUrl('putObject', params);
 console.log('The URL is', url);
@@ -16,8 +17,10 @@ console.log('The URL is', url);
 fs.readFile('test.jpg', (err, data) => {
     request.put({
         method: "PUT",
-        uri: url
+        uri: url,
+        headers:{"Content-Disposition":'attachment',"Content-Type":'img/jpg'}
     }, (error, response, body) => {
         console.log(error);
+//        console.log(response);
     });
 });
